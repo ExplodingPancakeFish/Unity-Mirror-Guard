@@ -12,10 +12,14 @@ public class PlayerScript : MonoBehaviour
     public float JumpHoldForce = 9f;
     private float JumpTimeCounter;
     private bool IsJumping;
-    //ground checking
+    //ground and wall checking
     public bool IsGrounded;
     public Transform GroundCheck;
+    public Transform LeftWallCheck;
+    public Transform RightWallCheck;
     public LayerMask GroundLayer;
+    public LayerMask WallLayer;
+    public LayerMask GroundWallLayer;
     //Falling Faster Over Time
     public float FallAcceleration = 2f;
     private float FallTime;
