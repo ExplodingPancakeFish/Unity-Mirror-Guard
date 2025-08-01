@@ -14,6 +14,8 @@ public class PlayerScript : MonoBehaviour
     private bool IsJumping;
     //ground and wall checking
     public bool IsGrounded;
+    public bool TouchingLeftWall;
+    public bool TouchingRightWall;
     public Transform GroundCheck;
     public Transform LeftWallCheck;
     public Transform RightWallCheck;
@@ -52,43 +54,75 @@ public class PlayerScript : MonoBehaviour
         {
             MoveDir = 0;
         }
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-        JumpBufferTimer = JumpBufferTime;
-    }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            JumpBufferTimer = JumpBufferTime;
+        }
 
-    //if (Input.GetKey(KeyCode.Space) && IsJumping)
-    //{
-       // if (JumpTimeCounter > 0)
-       // {
-       //     PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpHoldForce);
-       //     JumpTimeCounter -= Time.deltaTime;
-       // }
-      //  else
-      //  {
-       //     IsJumping = false;
-      //  }
-  //  }
-
-    if (Input.GetKeyUp(KeyCode.Space))
-    {
-        IsJumping = false;
-    }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            IsJumping = false;
+        }
     }
     void FixedUpdate()
     {
         //Are you touching ground?
         IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundLayer);
         if (IsGrounded)
-{
-    CoyoteTimer = CoyoteTime;
-}
-else
-{
-    CoyoteTimer -= Time.fixedDeltaTime;
-}
+        {
+            CoyoteTimer = CoyoteTime;
+        }
+        else
+        {
+            CoyoteTimer -= Time.fixedDeltaTime;
+        }
+        IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);
+        if (IsGrounded)
+        {
+            CoyoteTimer = CoyoteTime;
+        }
+        else
+        {
+            CoyoteTimer -= Time.fixedDeltaTime;
+        }
+        //are you touching a left wall?
+        TouchingLeftWall = Physics2D.OverlapCircle(LeftWallCheck.position, 0.1f, WallLayer);
+        if (TouchingLeftWall == false)
+        {
+            TouchingLeftWall = Physics2D.OverlapCircle(LeftWallCheck.position, 0.1f, GroundWallLayer);            
+        }
+        if (TouchingLeftWall)
+            {
+
+            }
+            else
+            {
+
+            }
+        //are you touching a right wall
+            TouchingRightWall = Physics2D.OverlapCircle(RightWallCheck.position, 0.1f, WallLayer);
+        if (TouchingRightWall == false)
+        {
+            TouchingRightWall = Physics2D.OverlapCircle(RightWallCheck.position, 0.1f, GroundWallLayer);               
+        }
+        if (TouchingRightWall)
+            {
+
+            }
+            else
+            {
+
+            }
+        if (TouchingLeftWall || TouchingRightWall)
+        {
+            FallAcceleration = 0.5f;
+        }
+        else
+        {
+            FallAcceleration = 2;
+        }
         // Apply Horizontal Movement
-        PlayerRB.linearVelocity = new Vector2(MoveDir * MoveSpd, PlayerRB.linearVelocity.y);
+            PlayerRB.linearVelocity = new Vector2(MoveDir * MoveSpd, PlayerRB.linearVelocity.y);
         // Apply Vertical Movement
         if (IsJumping && JumpTimeCounter > 0 && Input.GetKey(KeyCode.Space))
 {
