@@ -12,6 +12,7 @@ public class PlayerScript : MonoBehaviour
     public float LastDir;
     public bool LockMovement;
     public float WallClimbTimer;
+    public float LockMovementTimer;
     //Jumping
     public float JumpForce;
     public float MaxJumpTime = 0.3f;
@@ -112,7 +113,7 @@ public class PlayerScript : MonoBehaviour
                     {
                         PlayerRB.linearVelocity = new Vector2(5, 5);
                     }
-                    else
+                    else if (TouchingRightWall)
                     {
                         PlayerRB.linearVelocity = new Vector2(-5, 5);
                     }
@@ -126,11 +127,19 @@ public class PlayerScript : MonoBehaviour
                 WallClimbTimer -= 1;
                 if (WallClimbTimer == 0)
                 {
-                    LockMovement = false;
+                LockMovementTimer = 4;
                 }
         }
+        if (LockMovementTimer > 0)
+        {
+            LockMovementTimer -= 1;
+            if (LockMovementTimer == 0)
+            {
+                LockMovement = false;
+            }
+        }
         //Are you touching ground?
-        IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundLayer);
+            IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundLayer);
         if (IsGrounded)
         {
             CoyoteTimer = CoyoteTime;
