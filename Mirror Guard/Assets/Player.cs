@@ -9,6 +9,7 @@ public class PlayerScript : MonoBehaviour
     public float DashDuration;
     public float DashSpd = 10;
     public float Dashcooldown;
+    public float LastDir;
     //Jumping
     public float JumpForce;
     public float MaxJumpTime = 0.3f;
@@ -51,10 +52,12 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(KeyCode.A) == true)
         {
             MoveDir = -1;
+            LastDir = -1;
         }
         else if (Input.GetKey(KeyCode.D))
         {
             MoveDir = 1;
+            LastDir = 1;
         }
         else
         {
@@ -157,7 +160,7 @@ public class PlayerScript : MonoBehaviour
         //Dashing
         if (DashDuration > 0)
         {
-            PlayerRB.linearVelocity = new Vector2(MoveDir * DashSpd, PlayerRB.linearVelocity.y);
+            PlayerRB.linearVelocity = new Vector2(LastDir * DashSpd, PlayerRB.linearVelocity.y);
             DashDuration -= 1;
             if (DashDuration == 0)
             {
