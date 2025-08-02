@@ -6,6 +6,9 @@ public class PlayerScript : MonoBehaviour
     public Rigidbody2D PlayerRB;
     public float MoveDir;
     public float MoveSpd;
+    public float DashDuration;
+    public float DashSpd = 10;
+    public float Dashcooldown;
     //Jumping
     public float JumpForce;
     public float MaxJumpTime = 0.3f;
@@ -38,6 +41,7 @@ public class PlayerScript : MonoBehaviour
         MoveSpd = 5;
         JumpForce = 3;
         JumpHoldForce = 9;
+        DashSpd = 15;
     }
 
     // Update is called once per frame
@@ -56,10 +60,17 @@ public class PlayerScript : MonoBehaviour
         {
             MoveDir = 0;
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            JumpBufferTimer = JumpBufferTime;
+            if (Dashcooldown == 0)
+            {
+                DashDuration = 10;
+            }
         }
+        if (Input.GetKeyDown(KeyCode.Space))
+            {
+                JumpBufferTimer = JumpBufferTime;
+            }
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
@@ -125,35 +136,50 @@ public class PlayerScript : MonoBehaviour
             WallSlowing = new Vector2(0, 0);
             FallAcceleration = 2;
         }
+
         // Apply Horizontal Movement
             PlayerRB.linearVelocity = new Vector2(MoveDir * MoveSpd, PlayerRB.linearVelocity.y);
         // Apply Vertical Movement
         if (IsJumping && JumpTimeCounter > 0 && Input.GetKey(KeyCode.Space))
-{
-    PlayerRB.linearVelocity += Vector2.up * JumpHoldForce * Time.fixedDeltaTime;
-    JumpTimeCounter -= Time.fixedDeltaTime;
-}
-if (JumpBufferTimer > 0 && CoyoteTimer > 0)
-{
-    PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
-    IsJumping = true;
-    JumpTimeCounter = MaxJumpTime;
+        {
+            PlayerRB.linearVelocity += Vector2.up * JumpHoldForce * Time.fixedDeltaTime;
+            JumpTimeCounter -= Time.fixedDeltaTime;
+        }
+        if (JumpBufferTimer > 0 && CoyoteTimer > 0)
+        {
+            PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
+            IsJumping = true;
+            JumpTimeCounter = MaxJumpTime;
 
-    JumpBufferTimer = 0;
-    CoyoteTimer = 0;
-}
+            JumpBufferTimer = 0;
+            CoyoteTimer = 0;
+        }
+        //Dashing
+        if (DashDuration > 0)
+        {
+            PlayerRB.linearVelocity = new Vector2(MoveDir * DashSpd, PlayerRB.linearVelocity.y);
+            DashDuration -= 1;
+            if (DashDuration == 0)
+            {
+                Dashcooldown = 20;
+            }
+        }
+        if (Dashcooldown > 0)
+        {
+            Dashcooldown -= 1;
+        }
         //Falling Acceleration
-        if (PlayerRB.linearVelocity.y < 0)
-        {
-            FallTime += Time.fixedDeltaTime; // increase fall duration
-            FallTime = Mathf.Min(FallTime, 1.5f);//terminalvelocity
-            fallVelocity = Vector2.down * FallAcceleration * FallTime;
-            fallVelocity += WallSlowing;
-            PlayerRB.linearVelocity += fallVelocity * Time.fixedDeltaTime;
-        }
-        else
-        {
-            FallTime = 0; // reset when not falling
-        }
+            if (PlayerRB.linearVelocity.y < 0)
+            {
+                FallTime += Time.fixedDeltaTime; // increase fall duration
+                FallTime = Mathf.Min(FallTime, 1.5f);//terminalvelocity
+                fallVelocity = Vector2.down * FallAcceleration * FallTime;
+                fallVelocity += WallSlowing;
+                PlayerRB.linearVelocity += fallVelocity * Time.fixedDeltaTime;
+            }
+            else
+            {
+                FallTime = 0; // reset when not falling
+            }
     }
 }
