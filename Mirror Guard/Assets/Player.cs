@@ -25,6 +25,8 @@ public class PlayerScript : MonoBehaviour
     //Falling Faster Over Time
     public float FallAcceleration = 2f;
     private float FallTime;
+    public Vector2 WallSlowing;
+    public Vector2 fallVelocity;
     //Jump Buffering/Coyote Time
     public float CoyoteTime = 0.2f;
     private float CoyoteTimer;
@@ -115,10 +117,12 @@ public class PlayerScript : MonoBehaviour
             }
         if (TouchingLeftWall || TouchingRightWall)
         {
-            FallAcceleration = 0.5f;
+            WallSlowing = new Vector2(0, 10);
+            FallAcceleration = 1;
         }
         else
         {
+            WallSlowing = new Vector2(0, 0);
             FallAcceleration = 2;
         }
         // Apply Horizontal Movement
@@ -143,7 +147,9 @@ if (JumpBufferTimer > 0 && CoyoteTimer > 0)
         {
             FallTime += Time.fixedDeltaTime; // increase fall duration
             FallTime = Mathf.Min(FallTime, 1.5f);//terminalvelocity
-            PlayerRB.linearVelocity += Vector2.down * FallAcceleration * FallTime * Time.fixedDeltaTime;
+            fallVelocity = Vector2.down * FallAcceleration * FallTime;
+            fallVelocity += WallSlowing;
+            PlayerRB.linearVelocity += fallVelocity * Time.fixedDeltaTime;
         }
         else
         {
