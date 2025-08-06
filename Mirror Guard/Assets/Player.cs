@@ -140,14 +140,18 @@ public class PlayerScript : MonoBehaviour
         }
         //Are you touching ground?
             IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundLayer);
+        if (IsGrounded == false)
+        {
+                     IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);       
+            }
         if (IsGrounded)
-        {
-            CoyoteTimer = CoyoteTime;
-        }
-        else
-        {
-            CoyoteTimer -= Time.fixedDeltaTime;
-        }
+            {
+                CoyoteTimer = CoyoteTime;
+            }
+            else
+            {
+                CoyoteTimer -= Time.fixedDeltaTime;
+            }
         IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);
         if (IsGrounded)
         {
