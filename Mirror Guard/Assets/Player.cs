@@ -13,6 +13,7 @@ public class PlayerScript : MonoBehaviour
     public bool LockMovement;
     public float WallClimbTimer;
     public float LockMovementTimer;
+    public bool FreezeGravity;
     //Jumping
     public float JumpForce;
     public float MaxJumpTime = 0.3f;
@@ -152,7 +153,7 @@ public class PlayerScript : MonoBehaviour
             {
                 CoyoteTimer -= Time.fixedDeltaTime;
             }
-        IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);
+        /*/IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);
         if (IsGrounded)
         {
             CoyoteTimer = CoyoteTime;
@@ -160,7 +161,7 @@ public class PlayerScript : MonoBehaviour
         else
         {
             CoyoteTimer -= Time.fixedDeltaTime;
-        }
+        }/*/
         //are you touching a left wall?
         TouchingLeftWall = Physics2D.OverlapCircle(LeftWallCheck.position, 0.1f, WallLayer);
         if (TouchingLeftWall == false)
@@ -191,11 +192,20 @@ public class PlayerScript : MonoBehaviour
         }
         if (TouchingLeftWall || TouchingRightWall)
         {
+            //if dashing into wall resume usual movement
+            if (DashDuration > 0)
+            {
+                DashDuration = 0;
+                LockMovement = false;
+                FreezeGravity = false;
+            }
+            //slide down wall variables
             WallSlowing = new Vector2(0, 10);
             FallAcceleration = 1;
         }
         else
         {
+            //no sliding variables
             WallSlowing = new Vector2(0, 0);
             FallAcceleration = 2;
         }
@@ -205,12 +215,20 @@ public class PlayerScript : MonoBehaviour
         {
             PlayerRB.linearVelocity = new Vector2(MoveDir * MoveSpd, PlayerRB.linearVelocity.y);
         }
+        if (FreezeGravity == true)
+        {
+            PlayerRB.gravityScale = 0f;
+        }
+        else
+        {
+            PlayerRB.gravityScale = 1f;
+        }
         // Apply Vertical Movement
-            if (IsJumping && JumpTimeCounter > 0 && Input.GetKey(KeyCode.Space))
-            {
-                PlayerRB.linearVelocity += Vector2.up * JumpHoldForce * Time.fixedDeltaTime;
-                JumpTimeCounter -= Time.fixedDeltaTime;
-            }
+        if (IsJumping && JumpTimeCounter > 0 && Input.GetKey(KeyCode.Space))
+        {
+            PlayerRB.linearVelocity += Vector2.up * JumpHoldForce * Time.fixedDeltaTime;
+            JumpTimeCounter -= Time.fixedDeltaTime;
+        }
         if (JumpBufferTimer > 0 && CoyoteTimer > 0)
         {
             PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
@@ -223,11 +241,15 @@ public class PlayerScript : MonoBehaviour
         //Dashing
         if (DashDuration > 0)
         {
+            FreezeGravity = true;
+            LockMovement = true;
             PlayerRB.linearVelocity = new Vector2(LastDir * DashSpd, PlayerRB.linearVelocity.y);
             DashDuration -= 1;
             if (DashDuration == 0)
             {
                 Dashcooldown = 20;
+                FreezeGravity = false;
+                LockMovement = false;
             }
         }
         if (Dashcooldown > 0)
@@ -235,17 +257,17 @@ public class PlayerScript : MonoBehaviour
             Dashcooldown -= 1;
         }
         //Falling Acceleration
-        if (PlayerRB.linearVelocity.y < 0)
-        {
-            FallTime += Time.fixedDeltaTime; // increase fall duration
-            FallTime = Mathf.Min(FallTime, 1.5f);//terminalvelocity
-            fallVelocity = Vector2.down * FallAcceleration * FallTime;
-            fallVelocity += WallSlowing;
-            PlayerRB.linearVelocity += fallVelocity * Time.fixedDeltaTime;
-        }
-        else
-        {
-            FallTime = 0; // reset when not falling
-        }
+            if (PlayerRB.linearVelocity.y < 0)
+            {
+                FallTime += Time.fixedDeltaTime; // increase fall duration
+                FallTime = Mathf.Min(FallTime, 1.5f);//terminalvelocity
+                fallVelocity = Vector2.down * FallAcceleration * FallTime;
+                fallVelocity += WallSlowing;
+                PlayerRB.linearVelocity += fallVelocity * Time.fixedDeltaTime;
+            }
+            else
+            {
+                FallTime = 0; // reset when not falling
+            }
     }
 }
