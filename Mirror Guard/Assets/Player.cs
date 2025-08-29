@@ -14,6 +14,7 @@ public class PlayerScript : MonoBehaviour
     public float WallClimbTimer;
     public float LockMovementTimer;
     public bool FreezeGravity;
+    public bool AirDashUsed;
     //Jumping
     public float JumpForce;
     public float MaxJumpTime = 0.3f;
@@ -74,8 +75,14 @@ public class PlayerScript : MonoBehaviour
             {
                 if (Dashcooldown == 0)
                 {
-
-                    DashDuration = 10;
+                    if (AirDashUsed==false)
+                    {
+                        if (IsGrounded == false)
+                        {
+                            AirDashUsed = true;
+                        }
+                        DashDuration = 10;
+                    }
                 }
             }
         }
@@ -111,7 +118,6 @@ public class PlayerScript : MonoBehaviour
         {
                 if (WallClimbTimer > 5)
                 {
-                    Debug.Log("Diagonal");
                     if (TouchingLeftWall)
                     {
                         PlayerRB.linearVelocity = new Vector2(5, 5);
@@ -124,7 +130,6 @@ public class PlayerScript : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Up");
                     PlayerRB.linearVelocity = new Vector2(0, 5);
                 }
                 WallClimbTimer -= 1;
@@ -149,6 +154,7 @@ public class PlayerScript : MonoBehaviour
             }
         if (IsGrounded)
             {
+            AirDashUsed = false;
                 CoyoteTimer = CoyoteTime;
             }
             else
@@ -185,6 +191,7 @@ public class PlayerScript : MonoBehaviour
         }
         if (TouchingLeftWall || TouchingRightWall)
         {
+            AirDashUsed = false;
             //if dashing into wall resume usual movement
             if (DashDuration > 0)
             {
