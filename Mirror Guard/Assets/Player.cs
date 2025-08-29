@@ -153,15 +153,6 @@ public class PlayerScript : MonoBehaviour
             {
                 CoyoteTimer -= Time.fixedDeltaTime;
             }
-        /*/IsGrounded = Physics2D.OverlapCircle(GroundCheck.position, 0.1f, GroundWallLayer);
-        if (IsGrounded)
-        {
-            CoyoteTimer = CoyoteTime;
-        }
-        else
-        {
-            CoyoteTimer -= Time.fixedDeltaTime;
-        }/*/
         //are you touching a left wall?
         TouchingLeftWall = Physics2D.OverlapCircle(LeftWallCheck.position, 0.1f, WallLayer);
         if (TouchingLeftWall == false)
@@ -218,6 +209,8 @@ public class PlayerScript : MonoBehaviour
         if (FreezeGravity == true)
         {
             PlayerRB.gravityScale = 0f;
+            FallAcceleration = 0;
+            fallVelocity = new Vector2(0, 0);
         }
         else
         {
@@ -257,6 +250,8 @@ public class PlayerScript : MonoBehaviour
             Dashcooldown -= 1;
         }
         //Falling Acceleration
+        if (FreezeGravity == false)
+        {
             if (PlayerRB.linearVelocity.y < 0)
             {
                 FallTime += Time.fixedDeltaTime; // increase fall duration
@@ -269,5 +264,6 @@ public class PlayerScript : MonoBehaviour
             {
                 FallTime = 0; // reset when not falling
             }
+        }
     }
 }
