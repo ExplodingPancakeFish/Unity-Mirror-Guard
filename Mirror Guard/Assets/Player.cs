@@ -30,6 +30,7 @@ public class PlayerScript : MonoBehaviour
     public LayerMask GroundLayer;
     public LayerMask WallLayer;
     public LayerMask GroundWallLayer;
+    public bool firstwallframe;
     //Falling Faster Over Time
     public float FallAcceleration = 2f;
     private float FallTime;
@@ -73,6 +74,7 @@ public class PlayerScript : MonoBehaviour
             {
                 if (Dashcooldown == 0)
                 {
+
                     DashDuration = 10;
                 }
             }
@@ -161,7 +163,7 @@ public class PlayerScript : MonoBehaviour
         }
         if (TouchingLeftWall)
         {
-
+            LastDir = 1;
         }
         else
         {
@@ -175,7 +177,7 @@ public class PlayerScript : MonoBehaviour
         }
         if (TouchingRightWall)
         {
-
+            LastDir = -1;
         }
         else
         {
@@ -186,16 +188,21 @@ public class PlayerScript : MonoBehaviour
             //if dashing into wall resume usual movement
             if (DashDuration > 0)
             {
-                DashDuration = 0;
-                LockMovement = false;
-                FreezeGravity = false;
+                if (firstwallframe == false)
+                {
+                    DashDuration = 0;
+                    LockMovement = false;
+                    FreezeGravity = false;
+                }
             }
             //slide down wall variables
             WallSlowing = new Vector2(0, 10);
             FallAcceleration = 1;
+            firstwallframe = true;
         }
         else
         {
+            firstwallframe = false;
             //no sliding variables
             WallSlowing = new Vector2(0, 0);
             FallAcceleration = 2;
