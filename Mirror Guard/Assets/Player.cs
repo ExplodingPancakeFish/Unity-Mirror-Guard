@@ -279,5 +279,10 @@ public class PlayerScript : MonoBehaviour
                 FallTime = 0; // reset when not falling
             }
         }
+        if (JumpBufferTimer > 0)
+        {
+            JumpBufferTimer -= Time.fixedDeltaTime;
+        }
+
     }
 }
