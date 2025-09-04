@@ -21,7 +21,6 @@ public class PlayerScript : MonoBehaviour
     public float JumpHoldForce = 9f;
     private float JumpTimeCounter;
     private bool IsJumping;
-    public float Gravity = 3f;
     //ground and wall checking
     public bool IsGrounded;
     public bool TouchingLeftWall;
@@ -46,8 +45,8 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        MoveSpd = 5.5f;
-        JumpForce = 23;
+        MoveSpd = 5;
+        JumpForce = 3;
         JumpHoldForce = 9;
         DashSpd = 15;
     }
@@ -121,11 +120,11 @@ public class PlayerScript : MonoBehaviour
                 {
                     if (TouchingLeftWall)
                     {
-                        PlayerRB.linearVelocity = new Vector2(7, 30);
+                        PlayerRB.linearVelocity = new Vector2(5, 5);
                     }
                     else if (TouchingRightWall)
                     {
-                        PlayerRB.linearVelocity = new Vector2(-7, 30);
+                        PlayerRB.linearVelocity = new Vector2(-5, 5);
                     }
                     Debug.Log(PlayerRB.linearVelocity);
                 }
@@ -212,7 +211,7 @@ public class PlayerScript : MonoBehaviour
         {
             firstwallframe = false;
             //no sliding variables
-            WallSlowing = new Vector2(0, 5);
+            WallSlowing = new Vector2(0, 0);
             FallAcceleration = 2;
         }
 
@@ -229,7 +228,7 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            PlayerRB.gravityScale = Gravity;
+            PlayerRB.gravityScale = 1f;
         }
         // Apply Vertical Movement
         if (IsJumping && JumpTimeCounter > 0 && Input.GetKey(KeyCode.Space))
