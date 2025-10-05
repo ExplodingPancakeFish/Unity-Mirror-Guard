@@ -34,7 +34,7 @@ public class PlayerScript : MonoBehaviour
     public bool firstwallframe;
     //Falling Faster Over Time
     public float FallAcceleration = 2f;
-    private float FallTime;
+    public float FallTime;
     public Vector2 WallSlowing;
     public Vector2 fallVelocity;
     //Jump Buffering/Coyote Time
@@ -46,8 +46,8 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         MoveSpd = 5;
-        JumpForce = 3;
-        JumpHoldForce = 9;
+        JumpForce = 1;
+        JumpHoldForce = 20;
         DashSpd = 15;
     }
 
@@ -205,6 +205,12 @@ public class PlayerScript : MonoBehaviour
             //slide down wall variables
             WallSlowing = new Vector2(0, 10);
             FallAcceleration = 1;
+            if (firstwallframe == false)
+            {
+                FallTime = 0;
+                FallAcceleration = 0;
+                fallVelocity = new Vector2(0,0);
+            }
             firstwallframe = true;
         }
         else
