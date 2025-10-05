@@ -21,6 +21,9 @@ public class PlayerScript : MonoBehaviour
     public float JumpHoldForce = 9f;
     private float JumpTimeCounter;
     private bool IsJumping;
+    public float JumpRampTimer;
+    public float JumpRampDuration = 0.06f;
+    public float TargetJumpLaunch;
     //ground and wall checking
     public bool IsGrounded;
     public bool TouchingLeftWall;
@@ -46,9 +49,10 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         MoveSpd = 5;
-        JumpForce = 1;
+        JumpForce = 3;
         JumpHoldForce = 20;
         DashSpd = 15;
+        TargetJumpLaunch = JumpForce;
     }
 
     // Update is called once per frame
@@ -91,6 +95,7 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 JumpBufferTimer = JumpBufferTime;
+                JumpRampTimer = JumpRampDuration;
             }
 
             if (Input.GetKeyUp(KeyCode.Space))
@@ -244,7 +249,22 @@ public class PlayerScript : MonoBehaviour
         }
         if (JumpBufferTimer > 0 && CoyoteTimer > 0)
         {
-            PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
+            if (JumpRampTimer > 0)
+            {
+                // t from 0 -> 1 across the ramp (you can use other easing)
+                float t = 1f - (JumpRampTimer / JumpRampDuration);
+                // choose interpolation method: smoothstep or lerp
+                float interp = Mathf.SmoothStep(0f, 1f, t);
+                // current vertical velocity
+                float currentY = PlayerRB.linearVelocity.y;
+                // desired blended vertical velocity
+                float desiredY = Mathf.Lerp(currentY, TargetJumpLaunch, interp);
+                // apply only vertical change, preserve horizontal
+                PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, desiredY);
+
+                JumpRampTimer -= Time.fixedDeltaTime;
+            }
+            //PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
             IsJumping = true;
             JumpTimeCounter = MaxJumpTime;
 
