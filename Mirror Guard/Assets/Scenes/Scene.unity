@@ -145,8 +145,8 @@ Transform:
   m_GameObject: {fileID: 44033694}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.081, y: -0, z: 0}
-  m_LocalScale: {x: 0.31, y: 0.02, z: 1}
+  m_LocalPosition: {x: 0.081, y: -0.15, z: 0}
+  m_LocalScale: {x: 0.31, y: 0.0007, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1924082866}
@@ -331,6 +331,93 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!1 &454766989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 454766991}
+  - component: {fileID: 454766990}
+  m_Layer: 0
+  m_Name: Trail(For testing)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!212 &454766990
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454766989}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 6996319621718145703, guid: 9960c2e8e0301c64faa8024822fbbee7, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.17, y: 0.32}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &454766991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454766989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.400941, y: -1.5159329, z: 0.070626035}
+  m_LocalScale: {x: 1, y: 0.7, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &888732803
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,8 +845,8 @@ Transform:
   m_GameObject: {fileID: 1357217800}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.081, y: -0, z: 0}
-  m_LocalScale: {x: 0.31, y: 0.02, z: 1}
+  m_LocalPosition: {x: -0.081, y: -0.15, z: 0}
+  m_LocalScale: {x: 0.31, y: 0.0007, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1924082866}
@@ -1057,6 +1144,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fde4e91097ac0a41aec8a3aaa42d52d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trail: {fileID: 454766989}
+  trailtimer: 0
   PlayerRB: {fileID: 1924082863}
   MoveDir: 0
   MoveSpd: 0
@@ -1068,9 +1157,13 @@ MonoBehaviour:
   WallClimbTimer: 0
   LockMovementTimer: 0
   FreezeGravity: 0
+  AirDashUsed: 0
   JumpForce: 0
   MaxJumpTime: 0.3
-  JumpHoldForce: 9
+  JumpHoldForce: 1
+  JumpRampTimer: 0
+  JumpRampDuration: 0.06
+  TargetJumpLaunch: 0
   IsGrounded: 0
   TouchingLeftWall: 0
   TouchingRightWall: 0
@@ -1086,7 +1179,12 @@ MonoBehaviour:
   GroundWallLayer:
     serializedVersion: 2
     m_Bits: 512
+  firstwallframe: 0
+  newWalljX: 0
+  newWalljY: 0
+  currentvelocity: {x: 0, y: 0}
   FallAcceleration: 2
+  FallTime: 0
   WallSlowing: {x: 0, y: 0}
   fallVelocity: {x: 0, y: 0}
   CoyoteTime: 0.2
@@ -1248,3 +1346,4 @@ SceneRoots:
   - {fileID: 1093401251}
   - {fileID: 355674062}
   - {fileID: 888732806}
+  - {fileID: 454766991}

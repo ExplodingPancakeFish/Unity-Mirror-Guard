@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    public GameObject trail;
+    public float trailtimer;
     //movement variables: 
     public Rigidbody2D PlayerRB;
     public float MoveDir;
@@ -35,6 +37,9 @@ public class PlayerScript : MonoBehaviour
     public LayerMask WallLayer;
     public LayerMask GroundWallLayer;
     public bool firstwallframe;
+    public float newWalljX;
+    public float newWalljY;
+    public Vector2 currentvelocity;
     //Falling Faster Over Time
     public float FallAcceleration = 2f;
     public float FallTime;
@@ -48,9 +53,10 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        trailtimer = 10;
         MoveSpd = 5;
-        JumpForce = 3;
-        JumpHoldForce = 20;
+        JumpForce = 5;
+        JumpHoldForce = 13;
         DashSpd = 15;
         TargetJumpLaunch = JumpForce;
     }
@@ -58,39 +64,46 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Set Horizontal Movement
-        if (LockMovement == false)
+        //trail for testing
+        trailtimer -= 1;
+        if (trailtimer == 0)
         {
-            if (Input.GetKey(KeyCode.A) == true)
+            //Instantiate(trail, transform.position, transform.rotation);
+            trailtimer = 10;
+        } 
+        // Set Horizontal Movement
+            if (LockMovement == false)
             {
-                MoveDir = -1;
-                LastDir = -1;
-            }
-            else if (Input.GetKey(KeyCode.D))
-            {
-                MoveDir = 1;
-                LastDir = 1;
-            }
-            else
-            {
-                MoveDir = 0;
-            }
-            if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                if (Dashcooldown == 0)
+                if (Input.GetKey(KeyCode.A) == true)
                 {
-                    if (AirDashUsed==false)
+                    MoveDir = -1;
+                    LastDir = -1;
+                }
+                else if (Input.GetKey(KeyCode.D))
+                {
+                    MoveDir = 1;
+                    LastDir = 1;
+                }
+                else
+                {
+                    MoveDir = 0;
+                }
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    if (Dashcooldown == 0)
                     {
-                        if (IsGrounded == false)
+                        if (AirDashUsed == false)
                         {
-                            AirDashUsed = true;
+                            if (IsGrounded == false)
+                            {
+                                AirDashUsed = true;
+                            }
+                            DashDuration = 10;
                         }
-                        DashDuration = 10;
                     }
                 }
             }
-        }
-        if (TouchingRightWall == false && TouchingLeftWall == false)
+        if (IsGrounded)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -105,15 +118,17 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (LockMovement == false)
+            if (TouchingLeftWall || TouchingRightWall)
             {
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (LockMovement == false)
                 {
-                    LockMovement = true;
-                    WallClimbTimer = 10;
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        LockMovement = true;
+                        WallClimbTimer = 10;
+                    }
                 }
             }
-
         }
     }
     void FixedUpdate()
@@ -121,21 +136,29 @@ public class PlayerScript : MonoBehaviour
         //Wall Jumping
         if (WallClimbTimer > 0)
         {
-                if (WallClimbTimer > 5)
+            if (WallClimbTimer > 5)
+            {
+                if (TouchingLeftWall)
                 {
-                    if (TouchingLeftWall)
-                    {
-                        PlayerRB.linearVelocity = new Vector2(5, 5);
-                    }
-                    else if (TouchingRightWall)
-                    {
-                        PlayerRB.linearVelocity = new Vector2(-5, 5);
-                    }
-                    Debug.Log(PlayerRB.linearVelocity);
+                    //PlayerRB.linearVelocity = new Vector2(5, 5);
+                    currentvelocity = PlayerRB.linearVelocity;
+                    newWalljX = Mathf.Lerp(currentvelocity.x, 5, 0.6f);
+                    newWalljY = Mathf.Lerp(currentvelocity.y, 5, 0.6f);
+                    PlayerRB.linearVelocity = new Vector2(newWalljX, newWalljY);
                 }
-                else
+                else if (TouchingRightWall)
                 {
-                    PlayerRB.linearVelocity = new Vector2(0, 5);
+                    currentvelocity = PlayerRB.linearVelocity;
+                    newWalljX = Mathf.Lerp(currentvelocity.x, -5, 0.6f);
+                    newWalljY = Mathf.Lerp(currentvelocity.y, 5, 0.6f);
+                    PlayerRB.linearVelocity = new Vector2(newWalljX, newWalljY);
+                }
+                Debug.Log(PlayerRB.linearVelocity);
+            }
+            else
+            {
+                //PlayerRB.linearVelocity = new Vector2(0, 5);
+                    PlayerRB.linearVelocity = new Vector2(0, newWalljY);
                 }
                 WallClimbTimer -= 1;
                 if (WallClimbTimer == 0)
@@ -249,22 +272,26 @@ public class PlayerScript : MonoBehaviour
         }
         if (JumpBufferTimer > 0 && CoyoteTimer > 0)
         {
-            if (JumpRampTimer > 0)
+            if (JumpRampTimer == JumpRampDuration)
             {
-                // t from 0 -> 1 across the ramp (you can use other easing)
-                float t = 1f - (JumpRampTimer / JumpRampDuration);
-                // choose interpolation method: smoothstep or lerp
-                float interp = Mathf.SmoothStep(0f, 1f, t);
-                // current vertical velocity
-                float currentY = PlayerRB.linearVelocity.y;
-                // desired blended vertical velocity
-                float desiredY = Mathf.Lerp(currentY, TargetJumpLaunch, interp);
-                // apply only vertical change, preserve horizontal
-                PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, desiredY);
-
-                JumpRampTimer -= Time.fixedDeltaTime;
+                PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, 2);
             }
-            //PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, JumpForce);
+            if (JumpRampTimer > 0)
+                {
+                    // t from 0 -> 1 across the ramp (you can use other easing)
+                    float t = 1f - (JumpRampTimer / JumpRampDuration);
+                    // choose interpolation method: smoothstep or lerp
+                    float interp = Mathf.SmoothStep(0f, 1f, t);
+                    // current vertical velocity
+                    float currentY = PlayerRB.linearVelocity.y;
+                    // desired blended vertical velocity
+                    float desiredY = Mathf.Lerp(currentY, TargetJumpLaunch, interp);
+                    // apply only vertical change, preserve horizontal
+                    PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, desiredY);
+
+                    JumpRampTimer -= Time.fixedDeltaTime;
+                }
+            //PlayerRB.linearVelocity = new Vector2(PlayerRB.linearVelocity.x, 1);
             IsJumping = true;
             JumpTimeCounter = MaxJumpTime;
 
