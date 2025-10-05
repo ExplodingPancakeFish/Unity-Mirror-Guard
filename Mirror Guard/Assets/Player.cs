@@ -103,7 +103,7 @@ public class PlayerScript : MonoBehaviour
                     }
                 }
             }
-        if (IsGrounded)
+        if (TouchingLeftWall==false&&TouchingRightWall==false)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -118,7 +118,20 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            if (TouchingLeftWall || TouchingRightWall)
+            if (IsGrounded)
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    JumpBufferTimer = JumpBufferTime;
+                    JumpRampTimer = JumpRampDuration;
+                }
+
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    IsJumping = false;
+                }
+            }
+            else
             {
                 if (LockMovement == false)
                 {
