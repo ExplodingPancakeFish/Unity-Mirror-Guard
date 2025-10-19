@@ -22,22 +22,30 @@ public class JumpTestScript : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
-                JumpVar = new Vector2(0, 1);
-                JumpTimer = 10;
+                JumpVar = new Vector2(0, 3);
+                JumpTimer = 20;
             }
         }
         if (Input.GetKeyUp(KeyCode.F))
         {
             JumpTimer = 0;
+            //JumpTestRB.gravityScale = 1;
         }
     }
     void FixedUpdate()
     {
-    if (JumpTimer>0)
-            {
-            JumpTestRB.linearVelocity += JumpVar;
+        if (JumpTimer > 0)
+        {
+            //JumpTestRB.gravityScale = 0;
+            JumpTestRB.linearVelocity = JumpVar;
             JumpTimer -= 1;
-        } 
+        }
+        else
+        {
+
+
+
+        }       
     }
 }
 
