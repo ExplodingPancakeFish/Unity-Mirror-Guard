@@ -1,5 +1,5 @@
 using UnityEngine;
-
+/*
 public class PlayerScript : MonoBehaviour
 {
     public GameObject trail;
@@ -352,3 +352,4 @@ public class PlayerScript : MonoBehaviour
 
     }
 }
+*/
